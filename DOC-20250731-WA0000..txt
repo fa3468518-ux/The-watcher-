@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>The Watcher: The Return</title>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Dancing Script', cursive;
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+    }
+
+    body {
+      background: linear-gradient(to bottom right, #1a1a1a, #000);
+      color: white;
+      transition: background 0.5s, color 0.5s;
+    }
+
+    nav {
+      background-color: rgba(0, 0, 0, 0.7);
+      padding: 1rem;
+      display: flex;
+      justify-content: space-around;
+      font-size: 1.2rem;
+      position: sticky;
+      top: 0;
+      z-index: 999;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #e91e63;
+    }
+
+    section {
+      padding: 3rem;
+      margin: 2rem;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(255, 0, 0, 0.2);
+      backdrop-filter: blur(10px);
+    }
+
+    h1, h2 {
+      color: #ff1744;
+      text-shadow: 0 0 15px red;
+    }
+
+    button {
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: 10px;
+      background-color: #e91e63;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      box-shadow: 0 0 15px red;
+    }
+
+    #scroll-lore {
+      background: black;
+      color: red;
+      padding: 1rem;
+      font-style: italic;
+      max-height: 200px;
+      overflow-y: scroll;
+      border-left: 5px solid crimson;
+      animation: flicker 3s infinite alternate;
+    }
+
+    @keyframes flicker {
+      0% {opacity: 1;}
+      50% {opacity: 0.8;}
+      100% {opacity: 1;}
+    }
+
+    /* Flip Card */
+    .card-container {
+      perspective: 1000px;
+      width: 300px;
+      margin: auto;
+    }
+
+    .card {
+      position: relative;
+      width: 100%;
+      height: 200px;
+      transform-style: preserve-3d;
+      transition: transform 1s;
+    }
+
+    .card-container:hover .card {
+      transform: rotateY(180deg);
+    }
+
+    .card-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 15px;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .card-back {
+      transform: rotateY(180deg);
+      background: radial-gradient(circle, darkred, black);
+      color: red;
+      animation: blood-splash 1s ease;
+    }
+
+    @keyframes blood-splash {
+      0% { background-position: center; opacity: 0; }
+      100% { background-position: center; opacity: 1; }
+    }
+
+    /* Blackhole */
+    .blackhole {
+      position: fixed;
+      bottom: 50px;
+      right: 50px;
+      width: 100px;
+      height: 100px;
+      background: radial-gradient(ellipse at center, #000 40%, transparent 70%);
+      border-radius: 50%;
+      box-shadow: 0 0 40px 10px #e60000;
+      animation: spin 10s linear infinite;
+      z-index: -1;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* Musik Button */
+    #music-btn {
+      position: fixed;
+      left: 10px;
+      bottom: 10px;
+      z-index: 999;
+      background: #111;
+      border-radius: 50%;
+    }
+
+    audio {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="#home">🏠 Home</a>
+    <a href="#story">📖 Story</a>
+    <a href="#lore">📜 Lore</a>
+    <a href="#quiz">❓ Quiz</a>
+    <a href="#biodata">📒 Biodata</a>
+  </nav>
+
+  <section id="home">
+    <h1>The Watcher: The Return</h1>
+    <p id="home-text"></p>
+  </section>
+
+  <section id="story">
+    <h2>📖 Story</h2>
+    <p id="story-text"></p>
+  </section>
+
+  <section id="lore">
+    <h2>📜 Lore</h2>
+    <div id="scroll-lore"></div>
+  </section>
+
+  <section id="quiz">
+    <h2>❓ Mini Quiz</h2>
+    <div id="quiz-container"></div>
+    <p id="score"></p>
+  </section>
+
+  <section id="biodata">
+    <h2>📒 Biodata</h2>
+    <div class="card-container">
+      <div class="card">
+        <div class="card-face card-front">
+          <h3 style="font-size: 1.8rem;">Faiz Alfarizi</h3>
+          <p>Kelas: XI PPLG 1</p>
+        </div>
+        <div class="card-face card-back">
+          <h3>🩸 Pembuat Website</h3>
+          <p>By Faiz Alfarizi</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="blackhole"></div>
+
+  <button id="music-btn">🔊</button>
+  <audio id="bg-music" autoplay loop>
+    <source src="PTT-20250701-WA0645.opus" type="audio/ogg">
+    Browsermu tidak mendukung audio.
+  </audio>
+
+  <script>
+    const textData = {
+      home: "Dalam dunia penuh kegelapan, satu mata mengawasi. Di balik setiap bayangan, ada bisikan yang belum terjawab. Mereka yang tahu tak bisa kembali. Bersiaplah, karena kebenaran tak selalu membawa cahaya.",
+      story: `Mira menatap sumur di desa Halem. Desas-desus mengatakan, segel itu tak boleh dibuka. Tapi suara dari dalam berkata lain. "Ibuku... bisa kembali?" Bisikan menjadi jeritan. Dan malam itu, desa menghilang.\n\nYang tersisa hanyalah seorang anak... dengan mata merah membara.`,
+      lore: `Catatan Bayangan:\nTujuh entitas Cahaya tersegel dalam gua darah. Segel itu hanya bisa dibuka oleh darah keturunan Sang Pengkhianat.\n\nJika segel terangkat, dunia cahaya dan gelap akan kembali bertabrakan.\n\nPeringatan:\nJangan percayai bayanganmu. Ia lebih hidup dari yang kau kira.`
+    };
+
+    function typeEffect(elementId, text, speed = 40) {
+      const el = document.getElementById(elementId);
+      el.textContent = "";
+      let i = 0;
+      const timer = setInterval(() => {
+        el.textContent += text[i];
+        i++;
+        if (i >= text.length) clearInterval(timer);
+      }, speed);
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      typeEffect("home-text", textData.home);
+      typeEffect("story-text", textData.story);
+      typeEffect("scroll-lore", textData.lore);
+    });
+
+    // Music toggle
+    const musicBtn = document.getElementById("music-btn");
+    const bgMusic = document.getElementById("bg-music");
+    musicBtn.addEventListener("click", () => {
+      if (bgMusic.paused) {
+        bgMusic.play();
+      } else {
+        bgMusic.pause();
+      }
+    });
+
+    // Quiz
+    const quizData = [
+      { q: "Siapa nama anak dari desa Halem?", a: "Mira" },
+      { q: "Berapa entitas Cahaya yang tersegel?", a: "7" },
+      { q: "Apa warna mata makhluk yang muncul?", a: "Merah" },
+      { q: "Siapa pembuat website ini?", a: "Faiz Alfarizi" },
+      { q: "Apa nama kelas pembuat?", a: "XI PPLG 1" }
+    ];
+
+    let score = 0;
+    const quizContainer = document.getElementById("quiz-container");
+    const scoreEl = document.getElementById("score");
+
+    quizData.forEach((item, index) => {
+      const div = document.createElement("div");
+      div.innerHTML = `
+        <p>${item.q}</p>
+        <input type="text" id="answer-${index}" />
+        <button onclick="checkAnswer(${index})">Cek</button>
+        <span id="result-${index}"></span>
+      `;
+      quizContainer.appendChild(div);
+    });
+
+    function checkAnswer(index) {
+      const input = document.getElementById(`answer-${index}`);
+      const result = document.getElementById(`result-${index}`);
+      if (input.value.trim().toLowerCase() === quizData[index].a.toLowerCase()) {
+        result.textContent = "Benar!";
+        result.style.color = "darkred";
+        score++;
+      } else {
+        result.textContent = "Salah!";
+        result.style.color = "skyblue";
+      }
+      scoreEl.textContent = `Skor: ${score}/${quizData.length}`;
+    }
+  </script>
+
+</body>
+</html>
